@@ -1,0 +1,5 @@
+<node id='1'><message timestamp='1289602223986' sentTo='2' ></message></node>
+<node id='3'><message timestamp='1289602223989' receivedFrom='2' ></message><message timestamp='1289602223989' sentTo='4' ></message></node>
+<node id='2'><message timestamp='1289602223988' receivedFrom='1' ></message><message timestamp='1289602223989' sentTo='3' ></message></node>
+<node id='4'><message timestamp='1289602223990' receivedFrom='3' ></message><message timestamp='1289602223990' sentTo='5' ></message></node>
+<node id='5'><message timestamp='1289602223990' receivedFrom='4' ></message></node>
