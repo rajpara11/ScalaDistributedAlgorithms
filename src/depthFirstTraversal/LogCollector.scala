@@ -1,4 +1,4 @@
- package broadcast
+ package depthFirstTraversal
 
 import scala.actors.Actor
 import scala.actors.Actor._
