@@ -103,6 +103,7 @@ class Node(val id:Int, logCollector:LogCollector, isInitiator:Boolean = false) e
 					
 				case yesMessage:YesMessage =>	
 					if (state == active){
+						logIncoming(yesMessage.senderId, "yes")
 						for (neighbor <- neighbors){
 							if ((neighbor != null) && (yesMessage.senderId == neighbor.id)){
 								senderNode = neighbor
@@ -122,6 +123,7 @@ class Node(val id:Int, logCollector:LogCollector, isInitiator:Boolean = false) e
 					}
 				case noMessage:NoMessage =>	
 					if (state == active) {
+						logIncoming(noMessage.senderId, "no")
 						counter = counter + 1
 						
 						if (counter == neighbors.length) {
@@ -145,6 +147,7 @@ class Node(val id:Int, logCollector:LogCollector, isInitiator:Boolean = false) e
 			println("Node" + id + " has tree neighbor " + neighbor.id)
 				
 		}
+		logCollector ! new LogMessage(finalizeLog())
 	}
 	
 	def logOutgoing(neighbor:Int, typeMessage:String){
