@@ -8,7 +8,7 @@ import java.util.Calendar
 class Node(val id:Int, logCollector:LogCollector, isInitiator:Boolean = false) extends Actor {
 	
 	val idle:String = "idle"
-	val visited:String = "done"
+	val visited:String = "visited"
 	val done:String = "done"
 	
 	var initiator:Boolean = false
@@ -30,10 +30,11 @@ class Node(val id:Int, logCollector:LogCollector, isInitiator:Boolean = false) e
 		if (isInitiator){
 			println("Initiator node" + id + " has awakened")
 			initiator = true
+			
 			// Send token to first neighbor
 			visit(tokenMessageToSend, returnMessageToSend)
 			
-			state = done
+			//state = visited
 
 		}
 		loop{
@@ -42,24 +43,22 @@ class Node(val id:Int, logCollector:LogCollector, isInitiator:Boolean = false) e
 					if (state == idle){
 						logIncoming(tokenMessage.senderId, "token")
 						
-
+						
 						for (neighbor <- neighbors){
 							if ((neighbor != null) && (tokenMessage.senderId == neighbor.id)){
 								entry = neighbor
-								//neighbors = neighbors.remove(neighbor)
-							}
-							else {
 							}
 							
 						}
 
 						unvisited = neighbors.remove((neighbor) => neighbor.id == tokenMessage.senderId)
+
 						initiator = false
 						visit(tokenMessageToSend, returnMessageToSend)
 						
 					} else if (state == visited){
-						
-						unvisited = neighbors.remove((neighbor) => neighbor.id == tokenMessage.senderId)
+						logIncoming(tokenMessage.senderId, "token")
+						unvisited = unvisited.remove((neighbor) => neighbor.id == tokenMessage.senderId)
 							
 						for (neighbor <- neighbors){
 							if (neighbor != null && tokenMessage.senderId == neighbor.id){
@@ -69,21 +68,29 @@ class Node(val id:Int, logCollector:LogCollector, isInitiator:Boolean = false) e
 								logOutgoing(neighbor.id, "backedge")
 							}
 						}
+
 							
 					}
 				case returnMessage:ReturnMessage =>	
-					visit(tokenMessageToSend, returnMessageToSend)
+					if (state == visited) {
+						logIncoming(returnMessage.senderId, "return")	
+						visit(tokenMessageToSend, returnMessageToSend)
+					}
 				case backedgeMessage:BackedgeMessage =>	
-					visit(tokenMessageToSend, returnMessageToSend)
+					if (state == visited) {
+						logIncoming(backedgeMessage.senderId, "backedge")
+						visit(tokenMessageToSend, returnMessageToSend)
+					}
 			}
 		}
 	}
 	
 	def visit( tokenMessage:TokenMessage, returnMessage:ReturnMessage){
+
 		if ((unvisited.length != 0) && (tokenMessage!= null)) {
-			unvisited(0) ! tokenMessage
-			println("Node" + id + " sending Token message to Node" + unvisited(0).id)
-			logOutgoing(unvisited(0).id, "token")
+			unvisited.head ! tokenMessage
+			println("Node" + id + " sending Token message to Node" + unvisited.head.id)
+			logOutgoing(unvisited.head.id, "token")
 			state = visited
 			
 			unvisited = unvisited.drop(1)
@@ -98,6 +105,7 @@ class Node(val id:Int, logCollector:LogCollector, isInitiator:Boolean = false) e
 			logCollector ! new LogMessage(finalizeLog())
 			println("Node" + id + " is done")
 		}
+
 		
 	}
 	def setNeighbors(neighborsList:List[Node]){

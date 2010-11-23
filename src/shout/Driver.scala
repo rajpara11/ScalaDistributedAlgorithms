@@ -1,4 +1,4 @@
-package depthFirstTraversal
+package shout
 
 object Driver extends Application {
 	val logCollector = new LogCollector(5)
