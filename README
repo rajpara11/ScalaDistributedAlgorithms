@@ -1,0 +1,3 @@
+The project has some nice small examples on how to use Actors to communicate between entities. It is my first Scala project, so the code may be of dubious quality to those more informed.
+
+The project was built in Eclipse and eclipse project files are in there. Sorry if you're using something else. To run the project, just run any of the Driver.scala classes in any of the packages. Each package is it's own algorithm implementation.
